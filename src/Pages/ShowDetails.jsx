@@ -6,6 +6,8 @@ import {
 } from "../services/TMDB";
 import Spinner from "../components/Spinner";
 import MovieRow from "../components/MovieRow";
+import { motion } from "framer-motion";
+
 const ShowDetails = () => {
   const { id } = useParams();
   const { data, isFetching } = useGetShowDetailQuery(id);
@@ -31,7 +33,14 @@ const ShowDetails = () => {
       <div>
         <div className="relative">
           <div className="absolute w-full h-[500px] bg-gradient-to-t from-black"></div>
-          <img
+          <motion.img
+            initial={{ opacity: 0, scale: 0.3, y: -300 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{
+              delay: 0.6,
+              y: { duration: 1 },
+              default: { ease: "linear" },
+            }}
             src={`https://image.tmdb.org/t/p/original/${data?.backdrop_path}`}
             alt=""
             className="h-[500px] w-full object-cover"
@@ -42,7 +51,16 @@ const ShowDetails = () => {
             className="hidden md:block absolute top-16 rounded-lg left-24 h-[480px] w-[350px] object-cover"
           />
         </div>
-        <div className=" absolute top-16 md:left-[55%] lg:left-[40%] px-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.3, x: -300 }}
+          animate={{ opacity: 1, scale: 1, x: 0 }}
+          transition={{
+            delay: 0.6,
+            x: { duration: 1 },
+            default: { ease: "linear" },
+          }}
+          className=" absolute top-16 md:left-[55%] lg:left-[40%] px-6"
+        >
           <div className="my-5 text-4xl font-extrabold">{data?.name}</div>
           {data?.tagline && (
             <div className="italic bg-white text-black p-1 w-fit">
@@ -130,7 +148,7 @@ const ShowDetails = () => {
               ))}
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       <div className="mt-[640px] md:mt-[400px] mb-10 px-6">

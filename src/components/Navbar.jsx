@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FaHome, FaTv, FaSearch } from "react-icons/fa";
+import { FaHome, FaTv, FaSearch, FaTable, FaUser } from "react-icons/fa";
 import { UserAuth } from "../context/AuthContext";
+import { motion } from "framer-motion";
 const Navbar = () => {
   const [colorChange, setColorChange] = useState(false);
   const { user, logOut } = UserAuth();
@@ -36,8 +37,14 @@ const Navbar = () => {
             : "hidden fixed bg-transparent md:flex justify-between p-6 w-full z-[100]"
         }
       >
-        <Link to="/" className="text-3xl font-bold text-red-600">
-          MOVIEFLIX
+        <Link to="/">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.3, x: -100 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="text-3xl font-bold text-red-600">MOVIEFLIX</h1>
+          </motion.div>
         </Link>
         <div>
           <Link to="/search">
@@ -85,7 +92,13 @@ const Navbar = () => {
               : "md:hidden text-3xl font-bold text-red-600 p-3 w-full fixed text-center z-[100]"
           }
         >
-          MOVIEFLIX
+          <motion.div
+            initial={{ opacity: 0, scale: 0.3 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+          >
+            MOVIEFLIX
+          </motion.div>
           <Link to="/search" className="absolute right-6 top-6 text-sm">
             <FaSearch />
           </Link>
@@ -113,9 +126,28 @@ const Navbar = () => {
             to="/tvshows"
             style={({ isActive }) => (isActive ? activeStyle : undefined)}
           >
-            <FaTv />
+            <FaTable />
             <span className="btm-nav-label">Shows</span>
           </NavLink>
+          {user?.email ? (
+            <NavLink
+              id="RouterNavLink"
+              to="/account"
+              style={({ isActive }) => (isActive ? activeStyle : undefined)}
+            >
+              <FaUser />
+              <span className="btm-nav-label">Account</span>
+            </NavLink>
+          ) : (
+            <NavLink
+              id="RouterNavLink"
+              to="/signup"
+              style={({ isActive }) => (isActive ? activeStyle : undefined)}
+            >
+              <FaUser />
+              <span className="btm-nav-label">Sign Up</span>
+            </NavLink>
+          )}
         </div>
       </div>
     </div>

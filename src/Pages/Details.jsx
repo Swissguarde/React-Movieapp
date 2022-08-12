@@ -1,19 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { useGetMovieQuery, useGetRecommendedQuery } from "../services/TMDB";
 import { useParams } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import MovieRow from "../components/MovieRow";
 import { Link } from "react-router-dom";
-import { UserAuth } from "../context/AuthContext";
-import { db } from "../firebase";
-import { arrayUnion, doc, updateDoc } from "firebase/firestore";
+
+import { motion } from "framer-motion";
 
 const Details = () => {
-  const [like, setLike] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const { user } = UserAuth();
-  const movieID = doc(db, "users", `${user?.email}`);
-
   const { id } = useParams();
   const { data, isFetching } = useGetMovieQuery(id);
   const { data: recommended, isFetching: isRFetching } =
@@ -30,21 +24,6 @@ const Details = () => {
       return str;
     }
   };
-  const saveShow = async () => {
-    if (user?.email) {
-      setLike(!like);
-      setSaved(true);
-      await updateDoc(movieID, {
-        savedShows: arrayUnion({
-          id: movie.id,
-          title: movie.title,
-          img: movie.poster_path,
-        }),
-      });
-    } else {
-      alert("Please log in to save a movie");
-    }
-  };
 
   if (isFetching) {
     return <Spinner />;
@@ -54,7 +33,14 @@ const Details = () => {
       <div>
         <div className="relative">
           <div className="absolute w-full h-[500px] bg-gradient-to-t from-black"></div>
-          <img
+          <motion.img
+            initial={{ opacity: 0, scale: 0.3, y: -300 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{
+              delay: 0.6,
+              y: { duration: 1 },
+              default: { ease: "linear" },
+            }}
             src={`https://image.tmdb.org/t/p/original/${movie?.backdrop_path}`}
             alt=""
             className="h-[500px] w-full object-cover"
@@ -65,7 +51,16 @@ const Details = () => {
             className="hidden md:block absolute top-16 rounded-lg left-24 h-[480px] w-[350px] object-cover"
           />
         </div>
-        <div className=" absolute top-16 md:left-[55%] lg:left-[40%] px-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.3, x: -300 }}
+          animate={{ opacity: 1, scale: 1, x: 0 }}
+          transition={{
+            delay: 0.6,
+            x: { duration: 1 },
+            default: { ease: "linear" },
+          }}
+          className=" absolute top-16 md:left-[55%] lg:left-[40%] px-6"
+        >
           <div className="my-5 text-4xl font-extrabold">{movie?.title}</div>
 
           {movie?.tagline && (
@@ -98,24 +93,15 @@ const Details = () => {
             {average}/10
           </div>
 
-          <div className="grid grid-cols-2 gap-2 mt-2">
+          <div className="flex space-x-4 my-4">
             <button className="bg-white rounded-md text-black px-5 py-2">
               Play
             </button>
             <button className="bg-white rounded-md bg-opacity-30 text-white px-5 py-2">
               More Info
             </button>
-            <button
-              onClick={saveShow}
-              className={
-                like
-                  ? "rounded-md text-white bg-red-600 border-2 border-white px-5 py-2 max-w-full"
-                  : "rounded-md text-white border-2 border-white px-5 py-2 max-w-full"
-              }
-            >
-              {like ? "Remove from watchlist" : "Watchlist"}
-            </button>
           </div>
+
           <div className="flex my-5 space-x-2">
             <a
               className="border-2 border-white rounded px-5 py-2"
@@ -166,7 +152,7 @@ const Details = () => {
               ))}
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
       <div className="mt-[740px] md:mt-[400px] mb-10 px-6">
         <div className="text-2xl">

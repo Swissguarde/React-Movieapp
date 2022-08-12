@@ -4,7 +4,7 @@ import { useGetMoviesQuery } from "../services/TMDB";
 import Spinner from "../components/Spinner";
 import Main from "../components/Main";
 import { Link } from "react-router-dom";
-
+import { motion } from "framer-motion";
 const Home = () => {
   const { data, isFetching } = useGetMoviesQuery();
 
@@ -26,7 +26,19 @@ const Home = () => {
     <div>
       <div className="relative">
         <div className="absolute  w-full h-[500px] bg-gradient-to-t from-black"></div>
-        <img
+        {/* <motion.div
+          initial={{ opacity: 0, scale: 0.3, x: -100 }}
+          animate={{ opacity: 1, scale: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+        ></motion.div> */}
+        <motion.img
+          initial={{ opacity: 0, scale: 0.3, y: -300 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{
+            delay: 0.6,
+            y: { duration: 1 },
+            default: { ease: "linear" },
+          }}
           src={`https://image.tmdb.org/t/p/original/${movie?.backdrop_path}`}
           alt={movie?.title}
           className="h-[500px] w-full object-cover"
@@ -38,7 +50,18 @@ const Home = () => {
         />
       </div>
 
-      <div className=" absolute bottom-[35%] px-6">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.3, x: -300 }}
+        animate={{ opacity: 1, scale: 1, x: 0 }}
+        transition={{
+          delay: 0.6,
+          x: { duration: 1 },
+          default: { ease: "linear" },
+          type: "spring",
+          stiffness: 120,
+        }}
+        className=" absolute bottom-[35%] px-6"
+      >
         <div className="mt-5 mb-2 text-4xl font-extrabold">{movie?.title}</div>
 
         <p className="w-full mb-3 md:max-w-[70%] lg:max-w-[50%] xl:max-w-[35%] text-gray-200">
@@ -62,8 +85,10 @@ const Home = () => {
             More Info
           </Link>
         </div>
+      </motion.div>
+      <div className="mt-[150px]">
+        <Main />
       </div>
-      <Main />
     </div>
   );
 };

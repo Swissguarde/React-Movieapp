@@ -1,7 +1,7 @@
 import Navbar from "./components/Navbar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./Pages/Home";
-import Profile from "./Pages/Profile";
+
 import TvShows from "./Pages/TvShows";
 import Movies from "./Pages/Movies";
 import Details from "./Pages/Details";
@@ -26,7 +26,6 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/tvshows" element={<TvShows />} />
             <Route path="/movies" element={<Movies />} />
-            <Route path="/profile" element={<Profile />} />
             <Route path="/details/:id" element={<Details />} />
             <Route path="/actordetails/:id" element={<ActorDetails />} />
             <Route path="/showdetails/:id" element={<ShowDetails />} />
