@@ -42,7 +42,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 Please make sure to update tests as appropriate.
 
-##IMAGES
+## IMAGES
 
 ![mobile](https://user-images.githubusercontent.com/88935495/184434610-8947c37d-f918-4807-bb04-ec6f55551054.png)
 
