@@ -1,14 +1,12 @@
 import React from "react";
 import { useGetActorQuery, useGetMoviesByActorIdQuery } from "../services/TMDB";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import MovieRow from "../components/MovieRow";
 const ActorDetails = () => {
-  const page = 1;
-  const navigate = useNavigate();
   const { id } = useParams();
   const { data, isFetching } = useGetActorQuery(id);
-  const { data: movies } = useGetMoviesByActorIdQuery({ id, page });
+  const { data: movies } = useGetMoviesByActorIdQuery(id);
 
   if (isFetching) {
     return <Spinner />;
@@ -37,13 +35,9 @@ const ActorDetails = () => {
             >
               IMDB
             </a>
-            <button
-              className="border-2 border-white px-4 py-3"
-              v
-              onClick={() => navigate(-1)}
-            >
+            <Link to={-1} className="border-2 border-white px-4 py-3">
               Go back
-            </button>
+            </Link>
           </div>
         </div>
       </div>

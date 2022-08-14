@@ -151,7 +151,7 @@ const ShowDetails = () => {
         </motion.div>
       </div>
 
-      <div className="mt-[640px] md:mt-[400px] mb-10 px-6">
+      <div className="mt-[540px] md:mt-[400px] mb-10 px-6">
         <div className="text-2xl">
           Recommended after watching{" "}
           <span className="text-green-500">{data?.name}</span>

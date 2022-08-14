@@ -4,8 +4,9 @@ import { useParams } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import MovieRow from "../components/MovieRow";
 import { Link } from "react-router-dom";
-
+import { getAuth } from "firebase/auth";
 import { motion } from "framer-motion";
+import { db } from "../firebase.config";
 
 const Details = () => {
   const { id } = useParams();
@@ -14,6 +15,7 @@ const Details = () => {
     useGetRecommendedQuery(id);
 
   const movie = data;
+  console.log(movie);
   let average = `${movie?.vote_average}`;
   average = (Math.round(average) * 10) / 10;
 
@@ -24,6 +26,7 @@ const Details = () => {
       return str;
     }
   };
+  const auth = getAuth();
 
   if (isFetching) {
     return <Spinner />;
@@ -154,7 +157,7 @@ const Details = () => {
           </div>
         </motion.div>
       </div>
-      <div className="mt-[740px] md:mt-[400px] mb-10 px-6">
+      <div className="mt-[640px] md:mt-[400px] mb-10 px-6">
         <div className="text-2xl">
           Recommended after watching{" "}
           <span className="text-green-500">{movie?.title}</span>

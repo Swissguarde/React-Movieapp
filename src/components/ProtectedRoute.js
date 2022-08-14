@@ -1,14 +1,13 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
-import { UserAuth } from "../context/AuthContext";
-
-const ProtectedRoute = ({ children }) => {
-  const { user } = UserAuth();
-  if (!user) {
-    return <Navigate to="/" />;
-  } else {
-    return children;
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuthStatus } from "../hooks/useAuthStatus";
+import Spinner from "./Spinner";
+const ProtectedRoute = () => {
+  const { loggedIn, loading } = useAuthStatus();
+  if (loading) {
+    return <Spinner />;
   }
+  return loggedIn ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default ProtectedRoute;

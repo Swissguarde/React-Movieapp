@@ -66,7 +66,7 @@ const Movies = () => {
         <Pagination
           page={page}
           setPage={setPage}
-          totalPages={data.total_pages}
+          totalPages={data?.total_pages}
         />
       </div>
     </div>

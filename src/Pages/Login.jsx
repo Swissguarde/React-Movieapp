@@ -1,23 +1,39 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { UserAuth } from "../context/AuthContext";
+import { toast } from "react-toastify";
+import VisibilityIcon from "../assets/visibilityIcon.svg";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 const Login = () => {
-  const { user, logIn } = UserAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const { email, password } = formData;
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
     try {
-      await logIn(email, password);
-      navigate("/");
+      const auth = getAuth();
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      if (userCredential.user) {
+        navigate("/");
+      }
+      toast.success("Successfully logged in");
     } catch (error) {
-      console.log(error);
-      setError(error.message);
+      toast.error("Wrong User Credentials");
     }
+  };
+  const onChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.id]: e.target.value,
+    }));
   };
   return (
     <div className="relative">
@@ -32,11 +48,6 @@ const Login = () => {
           <div className="max-w-[450px] h-[600px] mx-auto bg-black/75">
             <div className="max-w-[320px] mx-auto py-16">
               <h1 className="text-3xl font-bold">Sign In</h1>
-              <div>
-                {error ? (
-                  <p className="p-2 bg-red-600 text-white mt-4">{error}</p>
-                ) : null}
-              </div>
 
               <form onSubmit={handleSubmit} className="w-full flex-col py-4">
                 <input
@@ -45,16 +56,26 @@ const Login = () => {
                   placeholder="Email"
                   autoComplete="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={onChange}
+                  id="email"
                 />
-                <input
-                  className="p-3 w-full my-2 bg-white text-black rounded"
-                  type="password"
-                  placeholder="Password"
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <div className="relative">
+                  <input
+                    className="p-3 w-full my-2 bg-white text-black rounded"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={onChange}
+                    id="password"
+                  />
+                  <img
+                    src={VisibilityIcon}
+                    alt=""
+                    className="absolute top-[25%] right-4"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  />
+                </div>
                 <button className="bg-red-600 py-3 w-full my-6 rounded block">
                   Sign In
                 </button>
@@ -63,7 +84,7 @@ const Login = () => {
                     <input type="checkbox" className="mr-2" />
                     Remember me
                   </p>
-                  <p>Need Help?</p>
+                  <Link to="/forgot-password">Forgot password?</Link>{" "}
                 </div>
                 <p className="py-10">
                   <span className="text-gray-400">New to Movieflix?</span>{" "}

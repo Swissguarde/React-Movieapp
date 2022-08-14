@@ -1,21 +1,59 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { UserAuth } from "../context/AuthContext";
+import VisibilityIcon from "../assets/visibilityIcon.svg";
+import { toast } from "react-toastify";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { db } from "../firebase.config";
+import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 
-const Signup = () => {
-  const { user, signUp } = UserAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const Login = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const { email, password, name } = formData;
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await signUp(email, password);
+      const auth = getAuth();
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      updateProfile(auth.currentUser, {
+        displayName: name,
+      });
+      const formDataCopy = { ...formData };
+      delete formDataCopy.password;
+      formDataCopy.timeStamp = serverTimestamp();
+
+      await setDoc(doc(db, "users", user.uid), {
+        formDataCopy,
+        savedShows: [],
+      });
+
+      toast.success("Successful");
       navigate("/");
     } catch (error) {
+      toast.error("Something went wrong. Try again");
       console.log(error);
     }
+  };
+  const onChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.id]: e.target.value,
+    }));
   };
   return (
     <div className="relative">
@@ -30,23 +68,43 @@ const Signup = () => {
           <div className="max-w-[450px] h-[600px] mx-auto bg-black/75">
             <div className="max-w-[320px] mx-auto py-16">
               <h1 className="text-3xl font-bold">Sign Up</h1>
+
               <form onSubmit={handleSubmit} className="w-full flex-col py-4">
+                <input
+                  className="p-3 w-full my-2 bg-white text-black rounded"
+                  type="text"
+                  placeholder="Name"
+                  autoComplete="name"
+                  value={name}
+                  onChange={onChange}
+                  id="name"
+                />
                 <input
                   className="p-3 w-full my-2 bg-white text-black rounded"
                   type="email"
                   placeholder="Email"
                   autoComplete="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={onChange}
+                  id="email"
                 />
-                <input
-                  className="p-3 w-full my-2 bg-white text-black rounded"
-                  type="password"
-                  placeholder="Password"
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <div className="relative">
+                  <input
+                    className="p-3 w-full my-2 bg-white text-black rounded"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={onChange}
+                    id="password"
+                  />
+                  <img
+                    src={VisibilityIcon}
+                    alt=""
+                    className="absolute top-[25%] right-4"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  />
+                </div>
                 <button className="bg-red-600 py-3 w-full my-6 rounded block">
                   Sign Up
                 </button>
@@ -55,13 +113,11 @@ const Signup = () => {
                     <input type="checkbox" className="mr-2" />
                     Remember me
                   </p>
-                  <p>Need Help?</p>
+                  <Link to="/forgot-password">Forgot password?</Link>{" "}
                 </div>
                 <p className="py-10">
-                  <span className="text-gray-400">
-                    Already subscribed to Movieflix?
-                  </span>{" "}
-                  <Link to="/login">Sign In</Link>
+                  <span className="text-gray-400">New to Movieflix?</span>{" "}
+                  <Link to="/signin">Sign In</Link>
                 </p>
               </form>
             </div>
@@ -72,4 +128,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Login;
